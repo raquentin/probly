@@ -1,2 +1,24 @@
 # probly
-🎲 Modeling probability in zero-dep Gleam.
+
+[![Package Version](https://img.shields.io/hexpm/v/probly)](https://hex.pm/packages/probly)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/probly/)
+
+```sh
+gleam add probly@1
+```
+```gleam
+import probly
+
+pub fn main() {
+  // TODO: An example of the project in use
+}
+```
+
+Further documentation can be found at <https://hexdocs.pm/probly>.
+
+## Development
+
+```sh
+gleam run   # Run the project
+gleam test  # Run the tests
+```
