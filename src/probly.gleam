@@ -1,3 +1,5 @@
+import gleam/float
+import gleam/io
 import gleam/list
 import gleam/pair
 
@@ -74,9 +76,4 @@ fn insert_or_update(element: #(a, Prob), acc: Dist(a)) -> Dist(a) {
 pub fn combine_dist_normalized(dist1: Dist(a), dist2: Dist(b)) -> Dist(#(a, b)) {
   combine_dist(dist1, dist2)
   |> normalize
-}
-
-// TODO: not whine about no main
-pub fn main() {
-  2
 }
