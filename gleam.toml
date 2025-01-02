@@ -1,5 +1,5 @@
 name = "probly"
-version = "0.0.1"
+version = "0.0.2"
 description = "Probabilistic functional programming in Gleam"
 licenses = ["MIT"]
 repository = { type = "github", user = "raquentin", repo = "probly" }
