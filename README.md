@@ -3,7 +3,7 @@
 [![Package Version](https://img.shields.io/hexpm/v/probly)](https://hex.pm/packages/probly)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/probly/)
 
-## Probabalistic functional programming without typeclasses
+## Probabalistic functional programming, without typeclasses
 
 This library is largely influenced by **Probabilistic Functional Programming in Haskell** by Martin Erwig and Steve Kollmansberger. This implementation adapts the paper's model to Gleam's simpler functional interface. See [All you need is data and functions](https://mckayla.blog/posts/all-you-need-is-data-and-functions.html).
 
