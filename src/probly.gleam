@@ -1,5 +1,3 @@
-import gleam/float
-import gleam/io
 import gleam/list
 import gleam/pair
 
