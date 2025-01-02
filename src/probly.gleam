@@ -1,18 +1,25 @@
 import gleam/list
 import gleam/pair
 
+/// The probability of an event occuring. Within [0, 1].
 pub type Prob =
   Float
 
+/// Represents the outcome of a probabilistic event as a collection of
+/// all possible values, tagged with their likelihood.
 pub type Dist(a) =
   List(#(a, Prob))
 
+/// Functions that "spread" values across distributions by assigning them
+/// with probabilities. Examples include `uniform` and `binomial`.
 pub type Spread(a) =
   fn(List(a)) -> Dist(a)
 
+/// Match an entry in a Dist to a given value of type `a`.
 pub type Event(a) =
   fn(a) -> Bool
 
+/// Retrieve the probability of an Event within a Dist occuring.
 pub fn probability_of_event(event: Event(a), dist: Dist(a)) -> Prob {
   dist
   |> list.filter(fn(e) { event(e.0) })
@@ -20,13 +27,12 @@ pub fn probability_of_event(event: Event(a), dist: Dist(a)) -> Prob {
   |> sum
 }
 
+/// Accumulate probabilities for events, presumably of the same `a` value.
 fn sum(xs: List(Prob)) -> Prob {
   list.fold(xs, 0.0, fn(x, acc) { x +. acc })
 }
 
-/// Combine distributions assuming independence.
-/// For every (value1, prob1) in dist1 and (value2, prob2) in dist2,
-/// produce ((value1, value2), prob1 * prob2).
+/// Combine distributions, assuming independence.
 pub fn combine_dist(dist1: Dist(a), dist2: Dist(b)) -> Dist(#(a, b)) {
   dist1
   |> list.flat_map(fn(e1: #(a, Prob)) {
@@ -43,34 +49,33 @@ pub fn combine_dist(dist1: Dist(a), dist2: Dist(b)) -> Dist(#(a, b)) {
 }
 
 /// Merge duplicates in a distribution by summing probabilities.
+/// "normalize" is a bit overloaded, this function does not ensure
+/// that the sum of all probabilities across a Dist is 1.
 pub fn normalize(dist: Dist(a)) -> Dist(a) {
-  // Fold over the original distribution, accumulating a "normalized" list
-  list.fold(dist, [], fn(acc: Dist(a), element: #(a, Prob)) {
-    insert_or_update(element, acc)
+  list.fold(dist, [], fn(acc: Dist(a), event: #(a, Prob)) {
+    insert_or_update(event, acc)
   })
 }
 
-/// Insert or update `(val, prob)` in the given accumulator list.
-/// If `val` already exists, add `prob` to it. Otherwise, prepend `(val, prob)`.
-fn insert_or_update(element: #(a, Prob), acc: Dist(a)) -> Dist(a) {
-  let val = pair.first(element)
-  let prob = pair.second(element)
+/// A helper to insert or update `event`s in a given `Dist`.
+fn insert_or_update(event: #(a, Prob), acc: Dist(a)) -> Dist(a) {
+  let val = pair.first(event)
+  let prob = pair.second(event)
   case acc {
-    [] ->
-      // Nothing in the accumulator yet; just put this element in
-      [#(val, prob)]
+    [] -> [#(val, prob)]
 
     [#(existing_val, existing_prob), ..tail] ->
       case existing_val == val {
         True -> [#(existing_val, existing_prob +. prob), ..tail]
         False -> [
           #(existing_val, existing_prob),
-          ..insert_or_update(element, tail)
+          ..insert_or_update(event, tail)
         ]
       }
   }
 }
 
+/// Normalize the combinination two `Dist`s.
 pub fn combine_dist_normalized(dist1: Dist(a), dist2: Dist(b)) -> Dist(#(a, b)) {
   combine_dist(dist1, dist2)
   |> normalize

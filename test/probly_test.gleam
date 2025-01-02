@@ -8,6 +8,9 @@ import gleam/order
 
 import probly.{type Dist}
 
+/// Tolerance for loose float equivalances.
+const float_tolerance = 0.00000001
+
 pub fn main() {
   gleeunit.main()
 }
@@ -62,7 +65,7 @@ pub fn combine_dist_test() {
       should.be_true(float.loosely_equals(
         a_prob,
         with: e_prob,
-        tolerating: 0.0000001,
+        tolerating: float_tolerance,
       ))
 
       acc
@@ -95,7 +98,7 @@ pub fn combine_dist_normalized_test() {
       should.be_true(float.loosely_equals(
         a_prob,
         with: e_prob,
-        tolerating: 0.000000001,
+        tolerating: float_tolerance,
       ))
 
       acc
