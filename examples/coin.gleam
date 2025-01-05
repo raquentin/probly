@@ -3,27 +3,17 @@ import gleam/io
 
 import probly
 
-// Define a distribution for a fair coin
+// Model coin flips with `probly.bernoulli`.
 pub fn main() {
-  let coin =
-    ["Heads", "Tails"]
-    |> uniform
+  let coin = bernoulli(0.5)
+  let is_heads = fn(x) { x == True }
 
-  // Define an event: "heads"
-  let is_heads = fn(x) { x == "Heads" }
-
-  // Probability of heads
-  let p_heads = probly.probability_of_event(is_heads, coin)
+  let p_heads = probability_of_event(is_heads, coin)
   io.println("Probability of heads: " <> float.to_string(p_heads))
 
-  // Combine two coin flips (independent)
-  let two_coins = probly.combine_dist(coin, coin)
+  let two_coins = combine_dist(coin, coin)
+  let both_heads_event = fn(e: #(Bool, Bool)) { e.0 == True && e.1 == True }
 
-  // Probability that "both are heads"
-  let both_heads_event = fn(e: #(String, String)) {
-    e.0 == "Heads" && e.1 == "Heads"
-  }
-
-  let p_both_heads = probly.probability_of_event(both_heads_event, two_coins)
+  let p_both_heads = probability_of_event(both_heads_event, two_coins)
   io.println("Probability both heads: " <> float.to_string(p_both_heads))
 }

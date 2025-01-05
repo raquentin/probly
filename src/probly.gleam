@@ -1,5 +1,8 @@
+import gleam/float
 import gleam/int
 import gleam/list
+import gleam/option.{type Option, None, Some}
+import gleam/order
 import gleam/pair
 
 /// The probability of an event occuring. Within [0, 1].
@@ -93,6 +96,30 @@ pub fn uniform(xs: List(a)) -> Dist(a) {
     _ -> {
       let p = 1.0 /. int.to_float(n)
       list.map(xs, fn(x) { #(x, p) })
+    }
+  }
+}
+
+/// Derive a 'Dist' with two events: 'true' with prob `p` and false with
+/// prob `1-p`.
+/// Caller must ensure that 0 <= `p` <= 1.
+pub fn bernoulli(p: Prob) -> Dist(Bool) {
+  [#(True, p), #(False, 1.0 -. p)]
+}
+
+/// Derive a 'Dist' with two events: 'true' with prob `p` and false with
+/// prob `1-p`.
+/// 'None' will be returned for invalid input `Prob`s.
+pub fn bernoulli_checked(p: Prob) -> Option(Dist(Bool)) {
+  case float.compare(p, 0.0) {
+    order.Lt -> None
+    order.Eq -> Some([#(True, 0.0), #(False, 1.0)])
+    order.Gt -> {
+      case float.compare(p, 1.0) {
+        order.Gt -> None
+        order.Eq -> Some([#(True, 1.0), #(False, 0.0)])
+        order.Lt -> Some([#(True, p), #(False, 1.0 -. p)])
+      }
     }
   }
 }

@@ -190,3 +190,80 @@ fn compare_int_dist(
   let #(val_b, _prob_b) = b
   int.compare(val_a, val_b)
 }
+
+pub fn bernoulli_test() {
+  // p = 0 => always false
+  let dist_zero = probly.bernoulli(0.0)
+  should.equal(list.length(dist_zero), 2)
+  should.equal(dist_zero, [#(True, 0.0), #(False, 1.0)])
+
+  // p = 1 => always true
+  let dist_one = probly.bernoulli(1.0)
+  should.equal(list.length(dist_one), 2)
+  should.equal(dist_one, [#(True, 1.0), #(False, 0.0)])
+
+  // p = 0.3 => typical Bernoulli
+  let dist_some = probly.bernoulli(0.3)
+  should.equal(list.length(dist_some), 2)
+
+  let total_prob =
+    list.fold(dist_some, 0.0, fn(acc: Float, vp: #(Bool, Float)) { acc +. vp.1 })
+  should.be_true(float.loosely_equals(
+    total_prob,
+    with: 1.0,
+    tolerating: float_tolerance,
+  ))
+
+  let p_true = probly.probability_of_event(fn(x) { x == True }, dist_some)
+  should.be_true(float.loosely_equals(
+    p_true,
+    with: 0.3,
+    tolerating: float_tolerance,
+  ))
+}
+
+pub fn bernoulli_checked_test() {
+  // Invalid (negative)
+  let dist_neg = probly.bernoulli_checked(-0.1)
+  should.be_none(dist_neg)
+
+  // Invalid (>1)
+  let dist_beyond = probly.bernoulli_checked(1.1)
+  should.be_none(dist_beyond)
+
+  // p = 0 => always False
+  let dist_zero = probly.bernoulli_checked(0.0)
+  let zero_dist = should.be_some(dist_zero)
+  should.equal(list.length(zero_dist), 2)
+  should.equal(zero_dist, [#(True, 0.0), #(False, 1.0)])
+
+  // p = 1 => always True
+  let dist_one = probly.bernoulli_checked(1.0)
+  let one_dist = should.be_some(dist_one)
+  should.equal(list.length(one_dist), 2)
+  should.equal(one_dist, [#(True, 1.0), #(False, 0.0)])
+
+  // p = 0.3 => typical bernoulli_checked
+  let dist_0_3 = probly.bernoulli_checked(0.3)
+  let some_dist = should.be_some(dist_0_3)
+  should.equal(list.length(some_dist), 2)
+  let total_prob =
+    list.fold(some_dist, 0.0, fn(acc: Float, vp: #(Bool, Float)) { acc +. vp.1 })
+  should.be_true(float.loosely_equals(
+    total_prob,
+    with: 1.0,
+    tolerating: float_tolerance,
+  ))
+  let p_true = probly.probability_of_event(fn(x) { x == True }, some_dist)
+  let p_false = probly.probability_of_event(fn(x) { x == False }, some_dist)
+  should.be_true(float.loosely_equals(
+    p_true,
+    with: 0.3,
+    tolerating: float_tolerance,
+  ))
+  should.be_true(float.loosely_equals(
+    p_false,
+    with: 0.7,
+    tolerating: float_tolerance,
+  ))
+}
