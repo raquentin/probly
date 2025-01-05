@@ -106,6 +106,30 @@ pub fn combine_dist_normalized_test() {
   )
 }
 
+pub fn uniform_spread_test() {
+  let die = probly.uniform([1, 2, 3, 4, 5, 6])
+  let one_sixth = 1.0 /. 6.0
+
+  should.equal(list.length(die), 6)
+
+  let total_prob =
+    list.fold(die, 0.0, fn(acc: Float, value_prob: #(Int, Float)) {
+      should.be_true(float.loosely_equals(
+        value_prob.1,
+        with: one_sixth,
+        tolerating: float_tolerance,
+      ))
+      acc +. value_prob.1
+    })
+
+  // all probs should be 1 as well
+  should.be_true(float.loosely_equals(
+    total_prob,
+    with: 1.0,
+    tolerating: float_tolerance,
+  ))
+}
+
 fn compare_int_pairs(
   a: #(#(Int, Int), Float),
   b: #(#(Int, Int), Float),

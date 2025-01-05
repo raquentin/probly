@@ -6,14 +6,9 @@ import probly
 // Define a distribution for a fair coin
 pub fn main() {
   // A fair 6-sided die
-  let die = [
-    #(1, 1.0 /. 6.0),
-    #(2, 1.0 /. 6.0),
-    #(3, 1.0 /. 6.0),
-    #(4, 1.0 /. 6.0),
-    #(5, 1.0 /. 6.0),
-    #(6, 1.0 /. 6.0),
-  ]
+  let die =
+    [1, 2, 3, 4, 5, 6]
+    |> uniform
 
   // Probability that the die shows a 3
   let event_3 = fn(x) { x == 3 }

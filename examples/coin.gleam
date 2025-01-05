@@ -5,7 +5,9 @@ import probly
 
 // Define a distribution for a fair coin
 pub fn main() {
-  let coin = [#("Heads", 0.5), #("Tails", 0.5)]
+  let coin =
+    ["Heads", "Tails"]
+    |> uniform
 
   // Define an event: "heads"
   let is_heads = fn(x) { x == "Heads" }

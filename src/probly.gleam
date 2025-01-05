@@ -1,3 +1,4 @@
+import gleam/int
 import gleam/list
 import gleam/pair
 
@@ -9,11 +10,6 @@ pub type Prob =
 /// all possible values, tagged with their likelihood.
 pub type Dist(a) =
   List(#(a, Prob))
-
-/// Functions that "spread" values across distributions by assigning them
-/// with probabilities. Examples include `uniform` and `binomial`.
-pub type Spread(a) =
-  fn(List(a)) -> Dist(a)
 
 /// Match an entry in a Dist to a given value of type `a`.
 pub type Event(a) =
@@ -79,4 +75,24 @@ fn insert_or_update(event: #(a, Prob), acc: Dist(a)) -> Dist(a) {
 pub fn combine_dist_normalized(dist1: Dist(a), dist2: Dist(b)) -> Dist(#(a, b)) {
   combine_dist(dist1, dist2)
   |> normalize
+}
+
+/// Functions that "spread" values across distributions by assigning them
+/// with probabilities. Examples include `uniform` and `binomial`.
+pub type Spread(a) =
+  fn(List(a)) -> Dist(a)
+
+/// Transform a list of events to a distribution of evenly probable events.
+pub fn uniform(xs: List(a)) -> Dist(a) {
+  let n = list.length(xs)
+
+  case n {
+    0 -> {
+      []
+    }
+    _ -> {
+      let p = 1.0 /. int.to_float(n)
+      list.map(xs, fn(x) { #(x, p) })
+    }
+  }
 }
